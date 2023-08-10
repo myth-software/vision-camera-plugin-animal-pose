@@ -5,17 +5,36 @@ detect animal poses in react native (ios only)
 ## Installation
 
 ```sh
-npm install vision-camera-plugin-animal-pose
+npm i -S vision-camera-plugin-animal-pose
 ```
+
+Add the plugin to your `babel.config.js`:
+
+```js
+module.exports = {
+  plugins: [
+    [
+      'react-native-reanimated/plugin',
+      {
+        globals: ['__detectAnimals'],
+      },
+    ],
+
+    // ...
+```
+
+> Note: You have to restart metro-bundler for changes in the `babel.config.js` file to take effect.
 
 ## Usage
 
 ```js
-import { multiply } from 'vision-camera-plugin-animal-pose';
+import { detectAnimals } from "vision-camera-plugin-animal-pose";
 
 // ...
-
-const result = await multiply(3, 7);
+const frameProcessor = useFrameProcessor((frame) => {
+  'worklet';
+  const animals = detectAnimals(frame);
+}, []);
 ```
 
 ## Contributing
