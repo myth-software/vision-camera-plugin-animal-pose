@@ -1,13 +1,16 @@
 import * as React from 'react';
 
-import { StyleSheet, View, Text } from 'react-native';
-import { multiply } from 'vision-camera-plugin-animal-pose';
+import { StyleSheet, Text, View } from 'react-native';
+import { useFrameProcessor } from 'react-native-vision-camera';
+import { detectAnimals } from 'vision-camera-plugin-animal-pose';
 
 export default function App() {
-  const [result, setResult] = React.useState<number | undefined>();
+  const [result] = React.useState<number | undefined>();
 
-  React.useEffect(() => {
-    multiply(3, 7).then(setResult);
+  useFrameProcessor((frame) => {
+    'worklet';
+    const animals = detectAnimals(frame);
+    console.warn(animals);
   }, []);
 
   return (

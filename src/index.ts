@@ -1,4 +1,4 @@
-/** globals __detectAnimal */
+/** globals __detectAnimals */
 
 import type { Frame } from 'react-native-vision-camera';
 
@@ -20,8 +20,8 @@ interface DetectedAnimal {
  * so a frameRate of **16 FPS** perfectly allows the algorithm to run without dropping a frame.
  * Anything higher might make video recording stutter, but works too.
  */
-export function detectAnimal(frame: Frame): Array<DetectedAnimal> {
+export function detectAnimals(frame: Frame): Array<DetectedAnimal> {
   'worklet';
   // @ts-expect-error Frame Processors are not typed.
-  return __detectAnimal(frame);
+  return __detectAnimals(frame);
 }

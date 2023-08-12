@@ -45,7 +45,7 @@ static inline id detectAnimals(Frame* frame, NSArray* args) {
   if (requestError) {
     return nil;
   }
-  return @[];
+  return bodyParts;
 }
 
 VISION_EXPORT_FRAME_PROCESSOR(detectAnimals)
