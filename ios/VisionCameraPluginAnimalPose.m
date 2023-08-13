@@ -24,13 +24,17 @@ static inline id detectAnimals(Frame* frame, NSArray* args) {
   void (^completionHandler)(VNRequest*, NSError*) = ^(VNRequest* request, NSError* error) {
     NSArray<VNAnimalBodyPoseObservation *> *results = request.results;
     int resultsCount = [results count];
-    
+    printf("resultsCount")
+    printf(resultsCount)
     if (resultsCount > 0) {
       VNAnimalBodyPoseObservation *animal = request.results.firstObject;
+      printf("animal")
+      printf(animal)
       
       if (animal) {
         NSDictionary<VNRecognizedPointGroupKey, VNRecognizedPoint *> *animalBodyAllParts = [animal recognizedPointsForGroupKey:VNRecognizedPointGroupKeyAll error:nil];
-        
+        printf("animalBodyAllParts")
+        printf(animalBodyAllParts)
         if (animalBodyAllParts.count > 0) {
           [bodyParts addObject:animalBodyAllParts];
         }
