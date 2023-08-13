@@ -2,7 +2,6 @@
 //  VisionCameraPluginAnimalPose.m
 //  VisionCameraPluginAnimalPose
 //  Created by pete smith on 8/11/23.
-//
 //  Copyright © 2023 myth software, llc. All rights reserved.
 //
 
@@ -17,39 +16,41 @@
 @implementation VisionCameraPluginAnimalPose
 
 static inline id detectAnimals(Frame* frame, NSArray* args) {
-  NSMutableArray *bodyParts = [NSMutableArray array];
-  CMSampleBufferRef buffer = frame.buffer;
-  UIImageOrientation orientation = frame.orientation;
-  NSDictionary<VNImageOption, id> *options = @{};
-  void (^completionHandler)(VNRequest*, NSError*) = ^(VNRequest* request, NSError* error) {
-    NSArray<VNAnimalBodyPoseObservation *> *results = request.results;
-    int resultsCount = [results count];
-    printf("resultsCount")
-    printf(resultsCount)
-    if (resultsCount > 0) {
-      VNAnimalBodyPoseObservation *animal = request.results.firstObject;
-      printf("animal")
-      printf(animal)
-      
-      if (animal) {
-        NSDictionary<VNRecognizedPointGroupKey, VNRecognizedPoint *> *animalBodyAllParts = [animal recognizedPointsForGroupKey:VNRecognizedPointGroupKeyAll error:nil];
-        printf("animalBodyAllParts")
-        printf(animalBodyAllParts)
-        if (animalBodyAllParts.count > 0) {
-          [bodyParts addObject:animalBodyAllParts];
+    NSMutableDictionary *bodyParts = [[NSMutableDictionary alloc]initWithCapacity:26];
+    CMSampleBufferRef buffer = frame.buffer;
+    UIImageOrientation orientation = frame.orientation;
+    NSDictionary<VNImageOption, id> *options = @{};
+
+    void (^completionHandler)(VNRequest*, NSError*) = ^(VNRequest* request, NSError* error) {
+        NSArray<VNAnimalBodyPoseObservation *> *results = request.results;
+        int resultsCount = [results count];
+        printf("resultsCount");
+        printf("Int resultsCount: %u\n", resultsCount);
+        if (resultsCount > 0) {
+            VNAnimalBodyPoseObservation *animal = request.results.firstObject;
+            
+            if (animal) {
+                NSDictionary<VNAnimalBodyPoseObservationJointName, VNRecognizedPoint *> *animalBodyAllParts = [animal recognizedPointsForJointsGroupName:VNAnimalBodyPoseObservationJointsGroupNameAll error:nil];
+                
+                for(id key in animalBodyAllParts) {
+                    VNRecognizedPoint *point = [animalBodyAllParts objectForKey:key];
+                    NSMutableDictionary *val = CFBridgingRelease(CGPointCreateDictionaryRepresentation([point location]));
+                    val[@"Confidence"] = @([point confidence]);
+                    [bodyParts setObject:val forKey: key];
+                }
+            }
         }
-      }
+    };
+
+    VNDetectAnimalBodyPoseRequest *animalBodyPoseRequest = [[VNDetectAnimalBodyPoseRequest alloc] initWithCompletionHandler:completionHandler];
+    VNImageRequestHandler *requestHandler = [[VNImageRequestHandler alloc] initWithCMSampleBuffer:buffer orientation: orientation options: options];
+    NSError *requestError;
+    [requestHandler performRequests:@[animalBodyPoseRequest] error: &requestError];
+
+    if (requestError) {
+        return nil;
     }
-  
-  };
-  VNDetectAnimalBodyPoseRequest *animalBodyPoseRequest = [[VNDetectAnimalBodyPoseRequest alloc] initWithCompletionHandler:completionHandler];
-  VNImageRequestHandler *requestHandler = [[VNImageRequestHandler alloc] initWithCMSampleBuffer:buffer orientation: orientation options: options];
-  NSError *requestError;
-  [requestHandler performRequests:@[animalBodyPoseRequest] error: &requestError];
-  if (requestError) {
-    return nil;
-  }
-  return bodyParts;
+    return bodyParts;
 }
 
 VISION_EXPORT_FRAME_PROCESSOR(detectAnimals)

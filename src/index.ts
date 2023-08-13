@@ -3,14 +3,12 @@
 import type { Frame } from 'react-native-vision-camera';
 
 interface DetectedAnimal {
-  /**
-   * A label describing the animal, in english.
-   */
-  label: string;
+  X: string;
+  Y: string;
   /**
    * A floating point number from 0 to 1, describing the confidence (percentage).
    */
-  confidence: number;
+  Confidence: number;
 }
 
 /**
