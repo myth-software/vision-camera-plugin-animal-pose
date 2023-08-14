@@ -1,25 +1,20 @@
-/** globals __detectAnimals */
-
 import type { Frame } from 'react-native-vision-camera';
+import { VisionCameraProxy } from 'react-native-vision-camera';
 
-interface DetectedAnimal {
-  X: string;
-  Y: string;
-  /**
-   * A floating point number from 0 to 1, describing the confidence (percentage).
-   */
-  Confidence: number;
-}
+const plugin = VisionCameraProxy.getFrameProcessorPlugin('detect_animals');
 
-/**
- * Returns an array of matching `DetectedAnimal`s for the given frame.
- *
- * This algorithm executes within **~60ms**,
- * so a frameRate of **16 FPS** perfectly allows the algorithm to run without dropping a frame.
- * Anything higher might make video recording stutter, but works too.
- */
-export function detectAnimals(frame: Frame): Array<DetectedAnimal> {
+export function detectAnimals(frame: Frame): string[] {
   'worklet';
-  // @ts-expect-error Frame Processors are not typed.
-  return __detectAnimals(frame);
+
+  if (plugin === null || plugin === undefined) {
+    throw new Error('Failed to load Frame Processor Plugin "detect_animals"!');
+  }
+
+  return plugin.call(frame, {
+    someString: 'hello!',
+    someBoolean: true,
+    someNumber: 42,
+    someObject: { test: 0, second: 'test' },
+    someArray: ['another test', 5],
+  }) as string[];
 }
