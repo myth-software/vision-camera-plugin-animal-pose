@@ -1,6 +1,6 @@
 {
   "name": "vision-camera-plugin-animal-pose",
-  "version": "0.4.0",
+  "version": "0.4.1",
   "description": "detect animal poses in react native (ios only)",
   "main": "lib/commonjs/index",
   "module": "lib/module/index",
