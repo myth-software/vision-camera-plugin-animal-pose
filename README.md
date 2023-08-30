@@ -2,6 +2,8 @@
 
 detect animal poses in react native (ios only)
 
+![demo image](https://i.ibb.co/HhTnpt0/Screenshot-2023-08-30-at-4-51-01-PM.png)
+
 ## Installation
 
 ```sh
